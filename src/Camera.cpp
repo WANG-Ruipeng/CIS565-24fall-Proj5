@@ -41,6 +41,19 @@ void Camera::UpdateOrbit(float deltaX, float deltaY, float deltaZ) {
     memcpy(mappedData, &cameraBufferObject, sizeof(CameraBufferObject));
 }
 
+glm::mat4 Camera::GetProjectionMatrix() const {
+    return cameraBufferObject.projectionMatrix;
+}
+
+glm::mat4 Camera::GetViewMatrix() const {
+    return cameraBufferObject.viewMatrix;
+}
+
+glm::vec3 Camera::GetPosition() const {
+    glm::mat4 inverseView = glm::inverse(cameraBufferObject.viewMatrix);
+    return glm::vec3(inverseView[3]);
+}
+
 Camera::~Camera() {
   vkUnmapMemory(device->GetVkDevice(), bufferMemory);
   vkDestroyBuffer(device->GetVkDevice(), buffer, nullptr);

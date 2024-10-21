@@ -45,8 +45,23 @@ Blades::Blades(Device* device, VkCommandPool commandPool, float planeDim) : Mode
     indirectDraw.firstInstance = 0;
 
     BufferUtils::CreateBufferFromData(device, commandPool, blades.data(), NUM_BLADES * sizeof(Blade), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, bladesBuffer, bladesBufferMemory);
-    BufferUtils::CreateBuffer(device, NUM_BLADES * sizeof(Blade), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, culledBladesBuffer, culledBladesBufferMemory);
+    BufferUtils::CreateBuffer(device, NUM_BLADES * sizeof(Blade), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT , culledBladesBuffer, culledBladesBufferMemory);
     BufferUtils::CreateBufferFromData(device, commandPool, &indirectDraw, sizeof(BladeDrawIndirect), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT, numBladesBuffer, numBladesBufferMemory);
+
+    objectTransData.objectTrans = glm::vec4(0.0, 0.5, 0.0, 1.25);
+
+    BufferUtils::CreateBuffer(device, sizeof(ObjectTransData), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, objectTransBuffer, objectTransBufferMemory);
+    vkMapMemory(device->GetVkDevice(), objectTransBufferMemory, 0, sizeof(ObjectTransData), 0, &data);
+    memcpy(data, &objectTransData, sizeof(ObjectTransData));
+    vkUnmapMemory(device->GetVkDevice(), objectTransBufferMemory);
+}
+
+void Blades::UpdateObjectTrans(const glm::vec4 objTrans) {
+    objectTransData.objectTrans = objTrans;
+
+    vkMapMemory(device->GetVkDevice(), objectTransBufferMemory, 0, sizeof(ObjectTransData), 0, &data);
+    memcpy(data, &objectTransData, sizeof(ObjectTransData));
+    vkUnmapMemory(device->GetVkDevice(), objectTransBufferMemory);
 }
 
 VkBuffer Blades::GetBladesBuffer() const {
@@ -61,6 +76,15 @@ VkBuffer Blades::GetNumBladesBuffer() const {
     return numBladesBuffer;
 }
 
+VkBuffer Blades::GetObjectTransBuffer() const {
+    return objectTransBuffer;
+}
+
+ObjectTransData Blades::GetObjectTransData() const
+{
+    return objectTransData;
+}
+
 Blades::~Blades() {
     vkDestroyBuffer(device->GetVkDevice(), bladesBuffer, nullptr);
     vkFreeMemory(device->GetVkDevice(), bladesBufferMemory, nullptr);
@@ -68,4 +92,6 @@ Blades::~Blades() {
     vkFreeMemory(device->GetVkDevice(), culledBladesBufferMemory, nullptr);
     vkDestroyBuffer(device->GetVkDevice(), numBladesBuffer, nullptr);
     vkFreeMemory(device->GetVkDevice(), numBladesBufferMemory, nullptr);
+    vkDestroyBuffer(device->GetVkDevice(), objectTransBuffer, nullptr);
+    vkFreeMemory(device->GetVkDevice(), objectTransBufferMemory, nullptr);
 }

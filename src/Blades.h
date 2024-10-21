@@ -69,20 +69,32 @@ struct BladeDrawIndirect {
     uint32_t firstInstance;
 };
 
+struct ObjectTransData {
+    glm::vec4 objectTrans;
+};
+
 class Blades : public Model {
 private:
     VkBuffer bladesBuffer;
     VkBuffer culledBladesBuffer;
     VkBuffer numBladesBuffer;
+    VkBuffer objectTransBuffer;
 
     VkDeviceMemory bladesBufferMemory;
     VkDeviceMemory culledBladesBufferMemory;
     VkDeviceMemory numBladesBufferMemory;
+    VkDeviceMemory objectTransBufferMemory;
+
+    void* data;
+    ObjectTransData objectTransData;
 
 public:
     Blades(Device* device, VkCommandPool commandPool, float planeDim);
     VkBuffer GetBladesBuffer() const;
     VkBuffer GetCulledBladesBuffer() const;
     VkBuffer GetNumBladesBuffer() const;
+    VkBuffer GetObjectTransBuffer() const;
+    ObjectTransData GetObjectTransData() const;
+    void UpdateObjectTrans(const glm::vec4 objTrans);
     ~Blades();
 };

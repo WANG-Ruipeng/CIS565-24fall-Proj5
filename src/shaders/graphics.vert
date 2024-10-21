@@ -8,6 +8,7 @@ layout(set = 0, binding = 0) uniform CameraBufferObject {
 
 layout(set = 1, binding = 0) uniform ModelBufferObject {
     mat4 model;
+    vec4 objectTrans;
 };
 
 layout(location = 0) in vec3 inPosition;
@@ -22,7 +23,11 @@ out gl_PerVertex {
 };
 
 void main() {
-    gl_Position = camera.proj * camera.view * model * vec4(inPosition, 1.0);
+    vec3 inPos = inPosition;
+    if(abs(inTexCoord.x - 0.7f) < 0.001f && abs(inTexCoord.y - 0.7f) < 0.001f){
+        inPos = inPos * objectTrans.w + objectTrans.xyz;
+    }
+    gl_Position = camera.proj * camera.view * model * vec4(inPos, 1.0);
     fragColor = inColor;
     fragTexCoord = inTexCoord;
 }

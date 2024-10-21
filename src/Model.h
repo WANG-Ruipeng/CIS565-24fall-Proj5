@@ -9,6 +9,7 @@
 
 struct ModelBufferObject {
     glm::mat4 modelMatrix;
+    glm::vec4 objectTransform;
 };
 
 class Model {
@@ -32,12 +33,15 @@ protected:
     VkImageView textureView = VK_NULL_HANDLE;
     VkSampler textureSampler = VK_NULL_HANDLE;
 
+    void* mappedData;
+
 public:
     Model() = delete;
     Model(Device* device, VkCommandPool commandPool, const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices);
     virtual ~Model();
 
     void SetTexture(VkImage texture);
+    void UpdateModelBufferObject(const glm::vec4& objTrans);
 
     const std::vector<Vertex>& getVertices() const;
 
