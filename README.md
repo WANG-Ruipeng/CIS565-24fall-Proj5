@@ -10,7 +10,9 @@ Vulkan Grass Rendering
 
 # Live Demo
 
-[Demo Video](img/Interaction_Demo.mp4)
+
+https://github.com/user-attachments/assets/e7435774-2076-4431-bef9-460ee926e27b
+
 
 # Control
 
