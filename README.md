@@ -10,6 +10,8 @@ Vulkan Grass Rendering
 
 # Live Demo
 
+[Demo Video](img/Interaction_Demo.mp4)
+
 # Control
 
 - Left click and move to change the camera position.
